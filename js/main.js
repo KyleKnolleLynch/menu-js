@@ -67,7 +67,7 @@ const menu = [
     title: 'classic burger',
     category: 'lunch',
     price: 11,
-    img: './images/pancakes.jpg',
+    img: './images/burger.jpg',
     desc:
       'Old fashioned burger smothered in swiss cheese, served with pickles and sweet potato fries.',
   },
@@ -108,9 +108,10 @@ const menu = [
   },
 ];
 
-/* display menu items */
 const sectionBody = document.querySelector('.section-body');
- 
+const btnContainer = document.querySelector('.btn-container');
+
+/* display menu items */
 const displayMenuItems = (menuItems) => {
   let mappedMenu = menuItems.map((item) => {
     return `<article class="menu-item grid-2 ${item.category}">
@@ -128,21 +129,37 @@ const displayMenuItems = (menuItems) => {
   sectionBody.innerHTML = mappedMenu;
 };
 
+/*  dynamically create and display filter buttons */
+const displayMenuButtons = () => {
+  const categories = menu.reduce(
+    (acc, cur) => {
+      !acc.includes(cur.category) && acc.push(cur.category);
+      return acc;
+    },
+    ['all']
+  );
+  const categoryButtons = categories
+    .map((category) => {
+      return `<button class="btn" type="button" data-id=${category}>${category}</button>`;
+    })
+    .join('');
+
+  btnContainer.innerHTML = categoryButtons;
+
+  /* filter menu items */
+  const filterButtons = btnContainer.querySelectorAll('.btn');
+  filterButtons.forEach((button) => {
+    button.addEventListener('click', (e) => {
+      const category = e.currentTarget.dataset.id;
+      const filteredMenu = menu.filter((item) => item.category === category);
+      category === 'all'
+        ? displayMenuItems(menu)
+        : displayMenuItems(filteredMenu);
+    });
+  });
+};
+
 document.addEventListener('DOMContentLoaded', () => {
   displayMenuItems(menu);
+  displayMenuButtons();
 });
-
-/* filter menu items */
-const filterButtons = document.querySelectorAll('.btn');
-
-filterButtons.forEach(button => {
-  button.addEventListener('click', e => {
-    const category = e.currentTarget.dataset.id;
-    const filteredMenu = menu.filter(item => item.category === category);
-    category === 'all' ? displayMenuItems(menu) : displayMenuItems(filteredMenu);
-  })  
-})
-
-
-
-
